@@ -1,0 +1,173 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Custom controls</title>
+    <link rel="stylesheet" href="https://cdn.pannellum.org/2.3/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.pannellum.org/2.3/pannellum.js"></script>
+
+    <style>
+    #panorama {
+        width: 100vw;
+        height: 100vh;
+        filter: saturate(1.2) blur(15px) brightness(1.1);
+    }
+    #controls {
+        position: absolute;
+        bottom: 0;
+        z-index: 3;
+        text-align: center;
+        width: 100%;
+        padding-bottom: 3px;
+    }
+    #frames {
+        position: absolute;
+        top: 0;
+        bottom:20px;
+        z-index: 2;
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+    }
+
+     #frameScroll{
+        width:500%;
+    }
+
+    .frame{
+        height: 100%;
+        width:100vw;
+        display:inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .slide{
+        height:40vw;
+        width: auto;
+        filter: saturate(1.2) ;
+    }
+
+
+
+    .ctrl {
+        padding: 12px;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .ctrl:hover {
+        filter: drop-shadow(1.2);
+    }
+    </style>
+</head>
+<body>
+
+<div id="panorama">
+    
+</div>
+<div id="frames">
+    <div id="frameScroll">
+    <div class="frame"> <img class="slide" src="frame1.png"> </div>
+    <div class="frame"> <img class="slide" src="frame2.png"> </div>
+    <div class="frame"> <img class="slide" src="frame3.png"> </div>
+    <div class="frame"> <img class="slide" src="frame4.png"> </div>
+    </div>
+    </div>
+<div id="controls">
+        <!-- <div class="ctrl" id="pan-up">&#9650;</div>
+        <div class="ctrl" id="pan-down">&#9660;</div> -->
+        <div class="ctrl" id="pan-left"><img src="arrow.png" style ="height:40px; width:auto; transform: scaleX(-1);"></div>
+        <div class="ctrl" id="pan-change"><img src="vr.png" style ="height:40px; width:auto;"></div>
+        <div class="ctrl" id="pan-right"><img src="arrow.png" style ="height:40px; width:auto;"></div>
+        <!-- <div class="ctrl" id="zoom-in">&plus;</div>
+        <div class="ctrl" id="zoom-out">&minus;</div> -->
+        <!-- <div class="ctrl" id="fullscreen">&#x2922;</div> -->
+    </div>
+
+<script>
+room = 0;
+// Create viewer
+viewer = pannellum.viewer('panorama', ﻿{
+    // "panorama": "https://media.istockphoto.com/photos/spherical-panorama-of-the-interior-3d-illustration-cg-render-picture-id1335210739",
+    "panorama": "https://media.istockphoto.com/photos/high-resolution-map-environment-map-picture-id520174796?s=612x612",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+
+
+
+// Make buttons work
+// document.getElementById('pan-up').addEventListener('click', function(e) {
+//     viewer.setPitch(viewer.getPitch() + 10);
+// });
+// document.getElementById('pan-down').addEventListener('click', function(e) {
+//     viewer.setPitch(viewer.getPitch() - 10);
+// });
+document.getElementById('pan-left').addEventListener('click', function(e) {
+    viewer.setYaw(viewer.getYaw() - 90);
+    document.getElementById('frames').scrollLeft -= window.innerWidth;
+});
+document.getElementById('pan-right').addEventListener('click', function(e) {
+    viewer.setYaw(viewer.getYaw() + 90);
+    document.getElementById('frames').scrollLeft += window.innerWidth;
+});
+document.getElementById('pan-change').addEventListener('click', function(e) {
+    switch(room){
+    case 0:
+    viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "https://media.istockphoto.com/photos/spherical-panorama-of-the-interior-3d-illustration-cg-render-picture-id1335210739",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 1;
+    break;
+
+    case 1: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "https://media.istockphoto.com/photos/bell-cave-360degree-view-picture-id1164169991?s=612x612",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 2;
+    break;
+
+    case 2: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "https://media.istockphoto.com/photos/3d-rendering-hdr-map-environment-picture-id1221420482",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 3;
+    break;
+
+    case 3: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "https://media.istockphoto.com/photos/3d-rendering-space-background-with-nebula-and-stars-environment-360-picture-id1343302182",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 0;
+    break;
+
+}
+});
+
+// document.getElementById('zoom-in').addEventListener('click', function(e) {
+//     viewer.setHfov(viewer.getHfov() - 10);
+// });
+// document.getElementById('zoom-out').addEventListener('click', function(e) {
+//     viewer.setHfov(viewer.getHfov() + 10);
+// });
+// document.getElementById('fullscreen').addEventListener('click', function(e) {
+//     viewer.toggleFullscreen();
+// });
+</script>
+
+</body>
+</html>
