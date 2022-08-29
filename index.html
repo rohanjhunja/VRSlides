@@ -1,0 +1,501 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Custom controls</title>
+    <link rel="stylesheet" href="https://cdn.pannellum.org/2.3/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.pannellum.org/2.3/pannellum.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.0.385/build/pdf.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,700,1,0" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        body{
+            background-color: black;
+            overflow: hidden;
+            /*font-family: Silkscreen;*/
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+    #panorama {
+        width: 100vw;
+        height: 100vh;
+        filter: saturate(1.2) blur(0px) brightness(1.1);
+    }
+    .controls {
+        position: absolute;
+        bottom: 50%;
+        z-index: 3;
+        text-align: center;
+        padding-bottom: 3px;
+        display: flex;
+        box-shadow: 1;
+        filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.2));
+    }
+    #frames {
+        position: absolute;
+        top: 0;
+        bottom:20px;
+        z-index: 2;
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+    }
+
+     #frameScroll{
+    }
+
+    #holder{
+        display: flex;
+        flex-direction: row;
+    }
+
+
+    /*.frame{
+        height: 100%;
+        width:100vw;
+        display:inline-flex;
+        align-items: center;
+        justify-content: center;
+    }*/
+
+
+
+
+    .ctrl {
+        padding: 12px;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .ctrl:hover {
+        filter: drop-shadow(1.2);
+    }
+
+    /*#slide1{
+        background-image:url(frame1.png); background-repeat: no-repeat; background-position: center; background-position: 50% 50%;
+    }
+     #slide2{
+        background-image:url(frame2.png); background-repeat: no-repeat; background-position: center; background-position: 50% 50%;
+    }
+     #slide3{
+        background-image:url(frame3.png); background-repeat: no-repeat; background-position: center; background-position: 50% 50%;
+    }
+     #slide4{
+        background-image:url(frame4.png); background-repeat: no-repeat; background-position: center; background-position: 50% 50%;
+    }
+
+    .slide{
+        height:40vw;
+        width: auto;
+        filter: saturate(1.2) ;
+        
+    }*/
+
+.canvas-wrapper{
+    height: 100vh;
+        display:inline-flex;
+        align-items: center;
+        justify-content: center;
+}
+
+
+.canvas-wrapper>canvas{
+  display: block;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+#Upload{
+    display: flex; position: absolute; top:0; left:0; z-index: 3; height: 100vh; width: 100vw; align-items: center; justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#uploadCard{
+    /*background-color: rgba(255, 255, 255);*/
+    /*background-image: url(retro.png);
+    background-repeat: no-repeat;
+    background-size: contain;*/
+    border: solid 2px white;
+    color: white;
+
+    height: auto; width: 50vw; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; padding: 2vw;
+    border-radius: 48px;
+    flex-direction: column;
+}
+
+#slide_uploads_label{
+text-align: center;
+vertical-align: middle;
+
+border: solid 2px rgba(255, 255, 255, 0.6);
+color: rgba(255, 255, 255, 0.6);
+font-size: 40px;
+padding: 64px;
+height: 10vw;
+width:10vw;
+border-radius: 24px;
+cursor: pointer;
+transition: 0.3s;
+}
+
+#slide_uploads_label:hover {
+    /*background-color: rgba(0, 0, 0, 0.1);*/
+    border: solid 2px rgba(255, 255, 255);
+    color: white;
+}
+
+a{
+    color: rgba(255, 255, 255,0.5);
+    transition: 0.3s;
+}
+
+a:hover{
+    color: rgba(255, 255, 255);
+}
+
+
+#fullscreen{
+    display: none; 
+    position: absolute; top:0; left:0; z-index: 3; height: 100vh; width: 100vw; align-items: center; justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#fullscreen >div{
+    display: none;
+}
+
+#fullscreen >div>canvas{
+    display: none;
+    cursor: pointer;
+}
+
+
+    </style>
+</head>
+<body>
+
+<div id="panorama">
+    
+</div>
+<div id="frames">
+<!--     <div id="frameScroll"> -->
+    <div id="holder"></div>
+    </div>
+    </div>
+
+<div id="fullscreen"></div>
+<<!-- div id="controls"> -->
+
+        <div class="controls ctrl" style="left:0;" id="pan-left"><img src="arrow.png" style ="height:40px; width:auto; transform: scaleX(-1);"></div>
+    
+        <div class="controls ctrl" style="right:0;" id="pan-right"><img src="arrow.png" style ="height:40px; width:auto;"></div>
+      
+    <!-- </div> -->
+
+
+<div id="Upload">
+    <div id="uploadCard" style="font-size: 5vw">
+        3D Slides
+        <label id="slide_uploads_label" for="slide_uploads" style="margin-top: 2vw;">Load PDF <br><span style="font-size: 3vw; line-height: 1.3; margin-top: 1vw;" class="material-symbols-outlined">
+upload_file
+</span>
+ </label>
+        <input id="slide_uploads" type="file" name="Slides" accept=".pdf" style ="opacity:0;">
+        <a href="https://rohanjhunja.github.io/" style="font-size: 1vw; text-decoration: none; margin: 1vw; ">made with &#10084; in Poona</a>
+    </div>
+</div>
+
+<script>
+room = 0;
+const input = document.querySelector('input');
+const preview = document.querySelector('#holder');
+let currentSlide = 1;
+let totalSlide = 0;
+let createSlide = 1;
+let createSlide2 = 1;
+let fullScreen = false;
+
+input.addEventListener('change', updateImageDisplay);
+
+function updateImageDisplay() {
+  while(preview.firstChild) {
+    preview.removeChild(preview.firstChild);
+    console.log('emptied');
+  }
+
+  const curFiles = input.files;
+  renderPDF(URL.createObjectURL(curFiles[0]), document.getElementById('holder'),0.8);
+  setTimeout(function(){
+    renderPDF(URL.createObjectURL(curFiles[0]), document.getElementById('fullscreen'),1.8);
+    }, 1000); 
+
+
+  document.getElementById('Upload').style="display:none;";
+  console.log('uploaded');
+
+}
+
+const fileTypes = [
+  ".pdf"
+];
+
+function validFileType(file) {
+  return fileTypes.includes(file.type);
+}
+
+
+
+
+
+// Create viewer
+viewer = pannellum.viewer('panorama', ﻿{
+    // "panorama": "https://media.istockphoto.com/photos/spherical-panorama-of-the-interior-3d-illustration-cg-render-picture-id1335210739",
+    "panorama": "https://media.istockphoto.com/photos/high-resolution-map-environment-map-picture-id520174796?s=612x612",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -45,
+    "autoRotate": -4
+});
+
+
+// Make buttons work
+// document.getElementById('pan-up').addEventListener('click', function(e) {
+//     viewer.setPitch(viewer.getPitch() + 10);
+// });
+// document.getElementById('pan-down').addEventListener('click', function(e) {
+//     viewer.setPitch(viewer.getPitch() - 10);
+// });
+document.getElementById('pan-left').addEventListener('click', function(e) {
+if(fullScreen){
+        let slideNum = currentSlide+(totalSlide/2)+1;
+        toggleSlide(document.getElementById('fullscreen'+slideNum));
+        setTimeout(function(){
+        toggleSlide();
+ }, 400); 
+    }
+
+    viewer.setYaw(viewer.getYaw() - 90);
+    document.getElementById('frames').scrollLeft -= window.innerWidth;
+    currentSlide--;
+    console.log(currentSlide);
+    if (currentSlide==1)
+        document.getElementById('pan-left').style.visibility='hidden';
+    else{
+        document.getElementById('pan-left').style.visibility='visible';
+        document.getElementById('pan-right').style.visibility='visible';
+    }
+});
+
+
+document.getElementById('pan-right').addEventListener('click', function(e) {
+    if(fullScreen){
+        let slideNum = currentSlide+(totalSlide/2)+1;
+        toggleSlide(document.getElementById('fullscreen'+slideNum));
+        setTimeout(function(){
+        toggleSlide();
+ }, 800); 
+    }
+    viewer.setYaw(viewer.getYaw() + 90);
+    document.getElementById('frames').scrollLeft += window.innerWidth;
+    currentSlide++;
+    console.log(currentSlide);
+    if (currentSlide==totalSlide/2)
+        document.getElementById('pan-right').style.visibility='hidden';
+    else{
+        document.getElementById('pan-left').style.visibility='visible';
+        document.getElementById('pan-right').style.visibility='visible';
+    }
+});
+document.getElementById('frames').addEventListener('click', function(e) {
+    if (event.target === event.currentTarget) {
+    switch(room){
+    case 0:
+    viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "field.jpeg",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 1;
+    
+    break;
+
+    case 1: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "space2.jpeg",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 2;
+
+    break;
+
+    case 2: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "Earth.jpeg",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 3;
+
+    break;
+
+    case 3: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "cave.jpeg",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 4;
+
+    break;
+
+    case 4: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "chamber.jpeg",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 5;
+
+    break;
+
+    case 5: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "https://cdnb.artstation.com/p/assets/panos/panos/032/731/691/large/bf4fd79b1e205d85.jpg?1607317770",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 6;
+
+    break;
+
+    case 6: viewer.destroy();
+    viewer = pannellum.viewer('panorama', ﻿{
+    "panorama": "https://media.istockphoto.com/photos/high-resolution-map-environment-map-picture-id520174796?s=612x612",
+    "autoLoad": true,
+    "showControls": false,
+    "yaw": -90
+});
+    room = 0;
+
+    break;
+
+}}
+});
+
+
+function renderPDF(url, canvasContainer,scaleSlide) {
+
+    viewer.stopAutoRotate();
+    viewer.setYaw(-45);
+
+    // options = options || { scale: 0.8 };
+        
+    function renderPage(page) {
+        var viewport = page.getViewport(scaleSlide);
+        var wrapper = document.createElement("div");
+        wrapper.className = "canvas-wrapper";
+        // wrapper.style = "height: 100vh; width: "+window.innerWidth+"px; "
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        wrapper.style="margin: 0px "+(window.innerWidth-canvas.width)/2+"px;";
+        canvas.setAttribute('id', canvasContainer.id+createSlide);
+        wrapper.setAttribute('id', 'div'+canvasContainer.id+createSlide);
+        canvas.setAttribute('onclick', 'toggleSlide(this)');
+        wrapper.appendChild(canvas)
+        canvasContainer.appendChild(wrapper);
+        // document.getElementById('fullscreen').appendChild(canvas);
+        createSlide++;
+        
+        page.render(renderContext);
+    }
+
+
+    var num = 1;
+    function renderPages(pdfDoc) {
+        for(num=1;num <= pdfDoc.numPages; num++){
+            pdfDoc.getPage(num).then(renderPage);
+        totalSlide++;
+        console.log(totalSlide);
+        if(num==pdfDoc.numPages)
+            pdfDoc.getPage(num).then(renderPage);
+    }
+
+    }
+
+    PDFJS.disableWorker = true;
+    PDFJS.getDocument(url).then(renderPages);
+
+    // setTimeout(function(){
+    // // var blank = document.createElement("div");
+    // // blank.style="margin: 0px "+window.innerWidth/2+"px;";
+    // // blank.style="width:"+window.innerWidth+"px; height:100vh;  display:inline-flex;";
+    // // var hold = document.getElementById("holder");
+    // // hold.appendChild(blank);
+
+    // document.getElementById("holder").style.width=(totalSlide+100)*window.width+"px";
+    // }, 500); 
+    
+
+  
+
+}  
+
+function toggleSlide(slide){
+    if(fullScreen){
+        let slideNum = slide.id;
+        console.log(slideNum);
+        document.getElementById(slideNum).style.display='none';
+        document.getElementById('div'+slideNum).style.display='none';
+        document.getElementById('fullscreen').style.display='none';
+        fullScreen=false;
+    }
+    else{
+        let slideNum = currentSlide+(totalSlide/2)+1;
+        console.log('fullscreen'+slideNum);
+        document.getElementById('fullscreen'+slideNum).style.display='flex';
+        document.getElementById('divfullscreen'+slideNum).style.display='flex';
+        document.getElementById('fullscreen').style.display='flex';
+        fullScreen=true;
+    }
+
+} 
+
+
+// renderPDF('Slide.pdf', document.getElementById('holder'));
+
+window.onresize = doALoadOfStuff;
+
+function doALoadOfStuff() {
+console.log('resized');
+    //do a load of stuff
+}
+
+</script>
+
+</body>
+</html>
